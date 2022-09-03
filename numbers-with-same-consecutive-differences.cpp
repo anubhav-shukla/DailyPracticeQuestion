@@ -3,25 +3,46 @@ using namespace std;
  
 // Function to print pairwise absolute
 // difference of consecutive elements
-void pairwiseDifference(int arr[], int n)
-{
-    int diff;
-    for (int i = 0; i < n - 1; i++) {
- 
-        // absolute difference between
-        // consecutive numbers
-        diff = abs(arr[i] - arr[i + 1]);
-        cout << diff << " ";
+    vector<int> result;
+    vector<int> numsSameConsecDiff(int n, int k) {
+        // Traverse for all nums from 1-9
+        for(int i=1;i<=9;i++){
+            dfs(n-1,k,i);
+        }
+        return result;
     }
-}
- 
-// Driver Code
+    
+    void dfs(int n,int k,int num){
+        // If n==0 add it to the result
+        if(n==0){
+            result.push_back(num);
+            return;
+        }
+        
+        int lastDigit = num%10;
+        
+        // We can create 2 digits from the previous last digit using lastDigit+k and lastDigit-k
+        int nextFirstDigit = lastDigit+k;
+        
+        // If the new digit is between 0-9 then only consider it
+        if(nextFirstDigit<10){
+            int newNum = num*10 + nextFirstDigit;
+            dfs(n-1,k,newNum);
+        }
+        
+        int nextSecondDigit = lastDigit-k;
+         // If the new second digit is between 0-9 then only consider it and check if it's not similar to first digit
+        if(nextFirstDigit!=nextSecondDigit && nextSecondDigit>=0){
+            int newNum = num*10 + nextSecondDigit;
+            dfs(n-1,k,newNum);
+        }
+        
+    }
 int main()
 {
-    int arr[] = { 4, 10, 15, 5, 6 };
-    int n = sizeof(arr) / sizeof(arr[0]);
+   int n = 3, k = 7;
  
-    pairwiseDifference(arr, n);
+    cout<<numsSameConsecDiff(n,k);
  
     return 0;
 }
