@@ -1,37 +1,30 @@
 class Solution {
 public:
-   int minReorder(int n, vector<vector<int>>& c) {
-        vector<vector<int>>adj(n);
-        vector<vector<int>>v(n);
-        for(int i=0;i<c.size();i++){
-            int u=c[i][0];
-            int x=c[i][1];
-            adj[u].push_back(x);
-            adj[x].push_back(u);
-            v[u].push_back(x);
+    int minReorder(int n, vector<vector<int>>& connections) {
+        unordered_map<int, vector<pair<int, int> > > adj;
+
+        for(auto x: connections){
+            int u = x[0];
+            int v = x[1];
+            adj[u].push_back({v, 1});
+            adj[v].push_back({u, 0});
         }
-        vector<bool>vis(n,false);
-        queue<int>q;
+        queue<int> q;
+        int ans = 0;
         q.push(0);
-        vis[0]=true;
-        int count=0;
+        vector<int>visited(n,0);
         while(!q.empty()){
-            int x=q.front();
+            int f = q.front();
             q.pop();
-            for(auto i:adj[x]){
-                bool f=false;
-                if(!vis[i]){
-                q.push(i);
-                
-                for(int j=0;j<v[i].size();j++){
-                    if(v[i][j]==x)
-                        f=true;
+            visited[f] = 1;
+            for(auto x: adj[f]){
+                if(!visited[x.first]){
+                    ans+=x.second;
+                    q.push(x.first);
+                    visited[x.first] = 1;
                 }
-                if(!f)
-                    count++;
-                vis[i]=true;}
             }
         }
-        return count;
+        return ans;
     }
 };
