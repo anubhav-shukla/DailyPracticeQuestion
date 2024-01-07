@@ -1,15 +1,34 @@
-int numberOfArithmeticSlices(vector<int>& nums) {
+class Solution {
+public:
+    int numberOfArithmeticSlices(vector<int>& nums) {
         int n = nums.size();
-        vector<unordered_map<long long,int>> ind_diff(n);  // Store for every index number of sequence ending at i with differnece d  (ind_diff[i][diff])
-        int ans = 0;  // Store ans
-        for(int i=0;i<n;i++){
-            int cur = 0; // Store no of valid sequence ending at i index 
-            for(int j=0;j<i;j++){
-                long long diff = (long)nums[i]-nums[j];  // diff b/w both indices
-                cur = cur + ind_diff[j][diff];    // no. of valid sequence ending at i index with difference diff
-                ind_diff[i][diff]+=(ind_diff[j][diff]+1);  // add current sequence (nums[j] ,nums[i]) + previous sequence ending at j equal to total no of sequence ending at i with difference diff
+        vector<vector<int>> dp(n, vector<int>(n, 0));
+        unordered_map<long, vector<int>> map;
+
+        for (int i = 0; i < n; i++) {
+            long temp = nums[i];
+            if (!map.count(temp)) {
+                map[temp] = vector<int>();
             }
-            ans+=cur; // Finally add cur to ans
+            map[temp].push_back(i);
         }
-        return ans;
+
+        int sum = 0;
+        for (int i = 1; i < n; i++) {
+            for (int j = i + 1; j < n; j++) {
+                long a = 2L * nums[i] - nums[j];
+                if (map.count(a)) {
+                    for (int k : map[a]) {
+                        if (k < i) {
+                            dp[i][j] += dp[k][i] + 1;
+                        } else {
+                            break;
+                        }
+                    }
+                }
+                sum += dp[i][j];
+            }
+        }
+        return sum;
     }
+};
