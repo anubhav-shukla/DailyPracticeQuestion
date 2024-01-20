@@ -1,41 +1,43 @@
-int sumSubarrayMins(vector<int>& arr) {
-        int n = arr.size(), mod = 1e9 + 7;
+using ll = long long;
+const int MOD = 1e9 + 7;
 
-        stack<pair<int, int>> st;
-        vector<int> pse(n, -1);
-        for (int i = 0; i < n; i++)
-        {
-            while (!st.empty() and st.top().first > arr[i])
-                st.pop();
+class Solution {
+public:
+    int sumSubarrayMins(vector<int>& nums) {
+        int length = nums.size();
+        vector<int> left(length, -1);
+        vector<int> right(length, length);
+        stack<int> stk;
 
-            if (!st.empty())
-                pse[i] = st.top().second;
-
-            st.push({arr[i], i});
+        for (int i = 0; i < length; ++i) {
+            while (!stk.empty() && nums[stk.top()] >= nums[i]) {
+                stk.pop();
+            }
+            if (!stk.empty()) {
+                left[i] = stk.top();
+            }
+            stk.push(i);
         }
 
-        while (!st.empty())
-            st.pop();
+        stk = stack<int>();
 
-        vector<int> nse(n, n);
-        for (int i = n - 1; i >= 0; i--)
-        {
-            while (!st.empty() and st.top().first >= arr[i])
-                st.pop();
-
-            if (!st.empty())
-                nse[i] = st.top().second;
-
-            st.push({arr[i], i});
+        for (int i = length - 1; i >= 0; --i) {
+            while (!stk.empty() && nums[stk.top()] > nums[i]) {
+                stk.pop();
+            }
+            if (!stk.empty()) {
+                right[i] = stk.top();
+            }
+            stk.push(i);
         }
 
-        long ans = 0;
-        for (int i = 0; i < n; i++)
-        {
-            long left = i - pse[i];
-            long right = nse[i] - i;
-            ans = (ans + left * right * arr[i]) % mod;
+        ll sum = 0;
+
+        for (int i = 0; i < length; ++i) {
+            sum += static_cast<ll>(i - left[i]) * (right[i] - i) * nums[i] % MOD;
+            sum %= MOD;
         }
 
-        return ans;
+        return sum;
     }
+};
