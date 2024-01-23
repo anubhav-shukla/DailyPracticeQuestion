@@ -1,30 +1,27 @@
-
-   int ans = 0;
-    map<char,int>mp;
+class Solution {
+public:
     int maxLength(vector<string>& arr) {
-       int n = arr.size();
-       string op="";
-        solve(0,n,arr,op);
-       return ans;
+        vector<int> dp = {0};
+        int res = 0;
+        
+        for (const string& s : arr) {
+            int a = 0, dup = 0;
+            for (char c : s) {
+                dup |= a & (1 << (c - 'a'));
+                a |= 1 << (c - 'a');
+            }
+            
+            if (dup > 0)
+                continue;
+            
+            for (int i = dp.size() - 1; i >= 0; i--) {
+                if ((dp[i] & a) > 0)
+                    continue;
+                dp.push_back(dp[i] | a);
+                res = max(res, __builtin_popcount(dp[i] | a));
+            }
+        }
+        
+        return res;
     }
-    void solve(int i,int n,vector<string>arr,string op){
-        if(i == n) return ;
-        op+=arr[i];
-        for(auto it : arr[i])
-            mp[it]++;
-        int f=0;
-        for(auto it : mp){
-            if(it.second > 1)
-                f=1;
-        }
-        if(f == 0){
-            ans = max(ans , (int)op.size());
-            solve(i+1,n,arr,op);
-        }
-       
-        for(auto it : arr[i]){
-          mp[it]--;
-          op.pop_back();
-        }
-        solve(i+1,n,arr,op);
-    }
+};
