@@ -1,38 +1,52 @@
-string minWindow(string const &s, string const &t){
-        if(s.size() < t.size()) return "";
-        unordered_map<char, int> sm;
-        unordered_map<char, int> tm;
-
-        for(auto const &c: t) tm[c]++;
-        int i = 0, j = -1, count = 0, limit = t.size();
-        int minLength = INT_MAX;
-        int startIndex = -1;
-
-        while(true){
-            bool sb = false, tb = false;            
-		    if(minLength == 1) break;
-            while(count < limit &&  i < s.size()){
-                sb = true;
-                char cr = s[i];
-                sm[cr]++;
-                if(sm[cr] <= tm[cr]) count++;
-                i++;
-            }
-
-            while(count == limit && j < i){
-                tb = true;
-                j++;
-                int temp =  i - j;
-                if(minLength == INT_MAX || temp < minLength) {minLength = temp; startIndex = j; }
-                char cr = s[j];
-                if(sm[cr] <= tm[cr]){
-                    count--;
-                }
-                sm[cr]--;
-
-            }
-            if(!sb && !tb) break;
+class Solution {
+public:
+    string minWindow(string s, string t) {
+        if (s.empty() || t.empty()) {
+            return "";
         }
-        if(startIndex < 0 && minLength == INT_MAX) return "";
-        return s.substr(startIndex, minLength);
+
+        unordered_map<char, int> dictT;
+        for (char c : t) {
+            int count = dictT[c];
+            dictT[c] = count + 1;
+        }
+
+        int required = dictT.size();
+        int l = 0, r = 0;
+        int formed = 0;
+
+        unordered_map<char, int> windowCounts;
+        int ans[3] = { -1, 0, 0 };
+
+        while (r < s.length()) {
+            char c = s[r];
+            int count = windowCounts[c];
+            windowCounts[c] = count + 1;
+
+            if (dictT.find(c) != dictT.end() && windowCounts[c] == dictT[c]) {
+                formed++;
+            }
+
+            while (l <= r && formed == required) {
+                c = s[l];
+
+                if (ans[0] == -1 || r - l + 1 < ans[0]) {
+                    ans[0] = r - l + 1;
+                    ans[1] = l;
+                    ans[2] = r;
+                }
+
+                windowCounts[c]--;
+                if (dictT.find(c) != dictT.end() && windowCounts[c] < dictT[c]) {
+                    formed--;
+                }
+
+                l++;
+            }
+
+            r++;
+        }
+
+        return ans[0] == -1 ? "" : s.substr(ans[1], ans[0]);
     }
+};
