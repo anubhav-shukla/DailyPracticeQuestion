@@ -1,13 +1,35 @@
-vector<vector<string>> groupAnagrams(vector<string>& strs) {
-        unordered_map<string,vector<string>> mp;
-        vector<vector<string>> answer;
-		
-        for(auto str:strs){
-            string s = str;
-            sort(str.begin(),str.end());
-            mp[str].push_back(s);
-        }
-        for(auto &[_,ans]:mp) answer.push_back(ans);
+#include <vector>
+#include <unordered_map>
+#include <algorithm>
+
+class Solution {
+public:
+    vector<vector<string>> groupAnagrams(vector<string>& words) {
+        // Unordered map to store anagram groups
+        unordered_map<string, vector<string>> anagramGroups;
         
-        return answer;
+        // Iterate through each word in the input vector
+        for (const string& word : words) {
+            // Sort the characters in the word to create a key
+            string key = word;
+            sort(key.begin(), key.end());
+            
+            // If key is not in the map, add a new entry with the word as a vector
+            if (anagramGroups.find(key) == anagramGroups.end()) {
+                anagramGroups[key] = {word};
+            }
+            // If key is already present, append the word to the existing vector
+            else {
+                anagramGroups[key].push_back(word);
+            }
+        }
+        
+        // Convert map values to a vector and return
+        vector<vector<string>> result;
+        for (const auto& group : anagramGroups) {
+            result.push_back(group.second);
+        }
+        
+        return result;
     }
+};
