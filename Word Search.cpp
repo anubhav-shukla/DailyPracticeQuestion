@@ -1,25 +1,36 @@
-  bool solve(vector<vector<char>>&board,int i,int j,string word,int ind,int r,int c)
-    {
-          if(ind==word.size()-1)
-          return true;
-          board[i][j]-=65;
-          if(i>0&&board[i-1][j]==word[ind+1]&&solve(board,i-1,j,word,ind+1,r,c))
-          return true;
-           if(j>0&&board[i][j-1]==word[ind+1]&&solve(board,i,j-1,word,ind+1,r,c))
-          return true;
-           if(i<r-1&&board[i+1][j]==word[ind+1]&&solve(board,i+1,j,word,ind+1,r,c))
-          return true;
-           if(j<c-1&&board[i][j+1]==word[ind+1]&&solve(board,i,j+1,word,ind+1,r,c))
-          return true;
-          board[i][j]+=65;
-          return false;
-    }
+class Solution {
+public:
     bool exist(vector<vector<char>>& board, string word) {
-
-        int r=board.size(),c=board[0].size();
-        for(int i=0;i<r;i++)
-           for(int j=0;j<c;j++)
-               if(board[i][j]==word[0]&&solve(board,i,j,word,0,r,c))
-                   return true;
-       return false; 
+        int m = board.size();
+        int n = board[0].size();
+        
+        function<bool(int, int, int)> backtrack = [&](int i, int j, int k) {
+            if (k == word.length()) {
+                return true;
+            }
+            if (i < 0 || i >= m || j < 0 || j >= n || board[i][j] != word[k]) {
+                return false;
+            }
+            
+            char temp = board[i][j];
+            board[i][j] = '\0';
+            
+            if (backtrack(i + 1, j, k + 1) || backtrack(i - 1, j, k + 1) || 
+                backtrack(i, j + 1, k + 1) || backtrack(i, j - 1, k + 1)) {
+                return true;
+            }
+            
+            board[i][j] = temp; 
+            return false;
+        };
+        
+        for (int i = 0; i < m; ++i) {
+            for (int j = 0; j < n; ++j) {
+                if (backtrack(i, j, 0)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
+};
