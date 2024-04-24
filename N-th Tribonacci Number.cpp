@@ -1,10 +1,26 @@
-int tribonacci(int n) {
-        int arr[38];
-        arr[0] = 0;
-        arr[1] = 1;
-        arr[2] = 1;
-        for(int i = 3; i<38; i++) {
-            arr[i] = arr[i-1] + arr[i-2] + arr[i-3];
-        }
-        return arr[n];
+class Solution {
+public:
+    int tribonacci(int n) {
+        std::unordered_map<int, int> memo;
+        return helper(n, memo);
     }
+    
+private:
+    int helper(int n, std::unordered_map<int, int>& memo) {
+        if (memo.find(n) != memo.end()) {
+            return memo[n];
+        }
+        
+        int result;
+        if (n == 0) {
+            result = 0;
+        } else if (n == 1 || n == 2) {
+            result = 1;
+        } else {
+            result = helper(n - 1, memo) + helper(n - 2, memo) + helper(n - 3, memo);
+        }
+        
+        memo[n] = result;
+        return result;
+    }
+};
