@@ -1,22 +1,33 @@
-bool checkSubarraySum(vector<int>& nums, int k) {
+class Solution {
+public:
+    bool checkSubarraySum(vector<int>& nums, int k) {
+        int n = nums.size();
+        unordered_map<int, int> remainderMap;
+        int cumulativeSum = 0;
         
-  int prefSum = 0;
-  
-  unordered_map<int, int> mp;
-  for(int i=0; i<nums.size(); i++)
-  {
-    prefSum += nums[i];
-    prefSum %= k;
-
-    if(prefSum == 0 && i) return true;
-
-    if(mp.find(prefSum) != mp.end())  // Found the required prefix sum 
-    {
-      if(i - mp[prefSum] > 1) return true; // check if atleast 2 elements are there or not
-    }
-    else mp[prefSum] = i;
-  }
-
-  return false; 
+        // Step 1: Initialize Remainder Map
+        remainderMap[0] = -1;
         
+        // Step 2: Iterate Through the List
+        for (int i = 0; i < n; i++) {
+            // Step 3: Calculate Cumulative Sum
+            cumulativeSum += nums[i];
+            
+            // Step 4: Calculate Remainder
+            int remainder = k == 0 ? cumulativeSum : cumulativeSum % k;
+            
+            // Step 5: Update Remainder Map
+            if (remainderMap.count(remainder)) {
+                // Check if segment length is at least two
+                if (i - remainderMap[remainder] > 1) {
+                    return true;
+                }
+            } else {
+                remainderMap[remainder] = i;
+            }
+        }
+        
+        // Step 6: Return the Result
+        return false;
     }
+};
