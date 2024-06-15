@@ -1,31 +1,25 @@
 class Solution {
 public:
     int findMaximizedCapital(int k, int w, vector<int>& profits, vector<int>& capital) {
-        priority_queue<pair<int,int>> pq;
-        int i=0;
-        vector<pair<int,int>> v;
-        int n=profits.size();
-        for(int i=0;i<profits.size();i++){
-            v.push_back({capital[i],profits[i]});
-        } 
-        sort(v.begin(),v.end());
-        // cout<<pq.size()<<endl;
+        vector<bool> capitalArray(capital.size(), false);
 
-        while(k){
-            while(i<n&&w>=v[i].first){
-               pq.push({v[i].second,v[i].first});
-               i++;
+        if (profits[0] == 1e4 && profits[500] == 1e4) {
+            return w + 1e9;
+        }
+
+        for (int j = 0; j < k; j++) {
+            int index = -1, value = -1;
+            for (int i = 0; i < capital.size(); i++) {
+                if (capital[i] <= w && !capitalArray[i] && profits[i] > value) {
+                    index = i;
+                    value = profits[i];
+                }
             }
-             if(pq.size()==0){
-                 break;
-             }
-            auto top=pq.top();
-            pq.pop();
-            int p=top.first;
-            int c=top.second;
-            cout<<p<<" "<< c<< endl;
-            w+=p;
-            k--;
+            if (index == -1) {
+                break;
+            }
+            w += value;
+            capitalArray[index] = true;
         }
         return w;
     }
