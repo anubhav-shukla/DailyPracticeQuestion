@@ -1,37 +1,33 @@
 class Solution {
 public:
-int partition(vector<int>& nums, int si, int ei) {
-    int pivot = nums[si + rand() % (ei - si + 1)];
-    int i = si - 1, j = ei + 1;
-    while (true) {
-        do {
-            i++;
-        } while (nums[i] < pivot);
-        do {
-            j--;
-        } while (nums[j] > pivot);
-        if (i >= j) {
-            return j;
+    void mergersort(vector<int> &a,int l,int r,int mid){
+        vector<int> tmp(r-l+1);
+        int s=mid+1,i=l,k=0;
+        while(i<=mid && s<=r){
+            if(a[i]<a[s]){
+                tmp[k++]=a[i++];
+            }
+            else tmp[k++]=a[s++];
         }
-        swap(nums[i], nums[j]);
+        while(i<=mid){
+            tmp[k++]=a[i++];
+        }
+        while(s<=r){
+            tmp[k++]=a[s++];
+        }
+        for(int i=l;i<=r;i++){
+            a[i]=tmp[i-l];
+        }
     }
-}
-
-void quicksort(vector<int>& nums, int si = 0, int ei = -1) {
-    if (ei == -1) {
-        ei = nums.size() - 1;
+    void merge(vector<int> &a,int l,int r){
+        if(l>=r) return;
+        int mid=(l+r)/2;
+        merge(a,l,mid);
+        merge(a,mid+1,r);
+        mergersort(a,l,r,mid);
     }
-    if (si >= ei) {
-        return;
+    vector<int> sortArray(vector<int>& a) {
+        merge(a,0,a.size()-1);
+        return a;
     }
-    int p = partition(nums, si, ei);
-    quicksort(nums, si, p);
-    quicksort(nums, p + 1, ei);
-}
-
-vector<int> sortArray(vector<int>& nums) {
-    quicksort(nums);
-    return nums;
-}
-
 };
