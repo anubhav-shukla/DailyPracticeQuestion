@@ -1,16 +1,12 @@
 class KthLargest {
-private:
     int k;
-    std::priority_queue<int, std::vector<int>, std::greater<int>> minHeap;
+    priority_queue<int,vector<int>,greater<int>> minHeap;
 
 public:
-    KthLargest(int k, vector<int>& nums) {
-        this->k = k;
-        for (int num : nums) {
-            add(num);
-        }
+    KthLargest(int k, std::vector<int>& nums) : k(k) {
+        for (auto num : nums) add(num);
     }
-
+    
     int add(int val) {
         if (minHeap.size() < k) {
             minHeap.push(val);
