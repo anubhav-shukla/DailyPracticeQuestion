@@ -1,41 +1,39 @@
 class Solution {
 public:
     vector<ListNode*> splitListToParts(ListNode* head, int k) {
-        int n=0;
-        ListNode* curr=head;
-        while(curr){
-            n++;
-            curr=curr->next;
+        vector<ListNode*> ans(k, nullptr);
+        int siz = 0;
+        ListNode* temp = head;
+        
+        // Calculate the total size of the linked list
+        while (temp != nullptr) {
+            siz++;
+            temp = temp->next;
         }
-        
-        vector<ListNode*> ans;
-        int x=n/k;
-        
-        curr=head;
-        for(int i=0;i<k;i++)
-        {
-            int realSize=x;
-            if(i<n%k) realSize++;
-            if(realSize==0)
-            {
-                ans.push_back(NULL);
-                continue;
+
+        int partSize = siz / k;  // Minimum size of each part
+        int extra = siz % k;     // Extra nodes to distribute
+
+        temp = head;
+        ListNode* prev = nullptr;
+
+        for (int i = 0; i < k && temp != nullptr; ++i) {
+            ans[i] = temp;
+            int currentPartSize = partSize + (extra > 0 ? 1 : 0);
+            extra--;
+
+            // Move temp `currentPartSize` steps forward
+            for (int j = 0; j < currentPartSize; ++j) {
+                prev = temp;
+                temp = temp->next;
             }
-            
-            
-            ans.push_back(curr);
-            
-            for(int j=0;j<realSize-1;j++)
-            {
-                curr=curr->next;
+
+            // Break the link for the current part
+            if (prev != nullptr) {
+                prev->next = nullptr;
             }
-            
-            ListNode* temp=curr;
-            curr=curr->next;
-            temp->next=NULL;
         }
-        
-        
+
         return ans;
     }
 };
