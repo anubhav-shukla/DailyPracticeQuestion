@@ -1,20 +1,36 @@
 class Solution {
 public:
+    int res = INT_MAX;
+    void dfs(vector<vector<int>>& graph,int curr,int cost = 0)
+    {
+        if(curr==graph.size())
+        {
+            res = std::min(res,cost);
+            return;
+        }
+        if(cost>=res)
+            return;
+        for(auto v : graph[curr])
+            dfs(graph,curr+v,cost);
+        dfs(graph,curr+1,cost+1);
+    }
     int minExtraChar(string s, vector<string>& dictionary) {
-        int max_val = s.length() + 1;
-        vector<int> dp(s.length() + 1, max_val);
-        dp[0] = 0;
-
-        unordered_set<string> dictionary_set(dictionary.begin(), dictionary.end());
-
-        for (int i = 1; i <= s.length(); ++i) {
-            dp[i] = dp[i - 1] + 1;
-            for (int l = 1; l <= i; ++l) {
-                if (dictionary_set.find(s.substr(i - l, l)) != dictionary_set.end()) {
-                    dp[i] = min(dp[i], dp[i - l]);
+        vector<vector<int>> graph(s.size());
+        for(auto w:dictionary)
+        {
+            int start = 0;
+            while(true)
+            {
+                if(auto pos = s.find(w,start);pos !=string::npos)
+                {
+                    graph[pos].push_back(w.size());
+                    start = pos+1;
                 }
+                else
+                    break;
             }
         }
-        return dp.back();
+        dfs(graph,0);
+        return res;
     }
 };
