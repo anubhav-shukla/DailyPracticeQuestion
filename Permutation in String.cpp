@@ -1,33 +1,45 @@
 class Solution {
-    bool areVectorsEqual(vector<int> a, vector<int> b){
-        for(int i=0; i<26; i++){
-            if(a[i]!=b[i]) return false;
+private: 
+    // Helper function to print the frequency array for debugging
+    void print(vector<int> v){
+        for(auto i:v){
+            cout << i << " ";
         }
-        return true;
+        cout << "\n";
     }
+
 public:
     bool checkInclusion(string s1, string s2) {
-        if(s2.size()<s1.size()) return false;
+        // Edge case: if s2 is smaller than s1, no permutation is possible
+        if(s2.size() < s1.size()) return false;
+
+        int n = s1.size();
+        int m = s2.size();
+
+        // Frequency arrays for s1 and the first window of s2
         vector<int> freqS1(26, 0);
-        for(char c: s1) freqS1[c-'a']++;
-        
-        vector<int> freqS2(26, 0);
-        int i=0, j=0;
-        
-        while(j<s2.size()){
-            freqS2[s2[j]-'a']++;
-            
-            if(j-i+1==s1.size()){
-                if(areVectorsEqual(freqS1, freqS2)) return true;
-            }
-            
-            if(j-i+1<s1.size()) j++;
-            else{
-                freqS2[s2[i]-'a']--;
-                i++;
-                j++;
-            }
+        vector<int> freqS2Sub(26, 0);
+
+        // Initialize the frequency arrays for s1 and the first window of s2
+        for(int i = 0; i < n; i++) {
+            freqS1[s1[i] - 'a']++;
+            freqS2Sub[s2[i] - 'a']++;
         }
+
+        // If the first window matches, return true
+        if(freqS1 == freqS2Sub) return true;
+
+        // Sliding window across s2
+        for(int i = 0; i < m - n; i++) {
+            // Update the sliding window
+            freqS2Sub[s2[i] - 'a']--;         // Remove the outgoing character
+            freqS2Sub[s2[i + n] - 'a']++;     // Add the incoming character
+
+            // Check if the updated window matches the frequency of s1
+            if(freqS1 == freqS2Sub) return true;
+        }
+
+        // If no match found, return false
         return false;
     }
 };
