@@ -1,28 +1,20 @@
 class Solution {
 public:
-    std::vector<int> largestValues(TreeNode* root) {
-        if (!root) return {};
-        
-        std::vector<int> result;
-        std::queue<TreeNode*> queue;
-        queue.push(root);
-        
-        while (!queue.empty()) {
-            int curr_level_size = queue.size();
-            int max_val = INT_MIN;
-            
-            for (int i = 0; i < curr_level_size; ++i) {
-                TreeNode* node = queue.front();
-                queue.pop();
-                max_val = std::max(max_val, node->val);
-                
-                if (node->left) queue.push(node->left);
-                if (node->right) queue.push(node->right);
+    vector<int> largestValues(TreeNode* root) {
+        vector<int> ans;
+        queue<TreeNode*> q;
+        q.push(root);
+        while(!q.empty()) {
+            int len = q.size() , maax = INT_MIN;  //len provides us the number of nodes available at a level
+            while(len--) {   //this is where we traverse all nodes of same level
+                auto temp = q.front();
+                q.pop();
+                maax = max(maax,temp->val);
+                if(temp->left) q.push(temp->left);
+                if(temp->right) q.push(temp->right);
             }
-            
-            result.push_back(max_val);
+            ans.push_back(maax);
         }
-        
-        return result;
+        return ans;
     }
 };
